@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
-      <body>
+      <body className="bg-gray-200 text-slate-900">
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>

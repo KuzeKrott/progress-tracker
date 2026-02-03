@@ -7,10 +7,35 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  /* Inputs */
+  .input {
+    @apply w-full border border-slate-300 rounded-md px-3 py-2 text-sm;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+    @apply placeholder:text-slate-400;
+  }
+
+  .text-label {
+    @apply text-base text-slate-600 self-center;
+  }
+
+  .error-text {
+    @apply text-red-500 text-sm mt-1;
+  }
+
+  .textarea {
+    @apply input resize-none;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-blue-500 text-white px-4 py-2 rounded-md;
+    @apply hover:bg-blue-600 transition;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg border border-slate-200 p-4 shadow-sm;
   }
 }
 
@@ -37,10 +62,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

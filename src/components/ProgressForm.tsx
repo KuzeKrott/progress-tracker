@@ -6,10 +6,23 @@ import { progressSchema } from "@/schemas/progressSchema";
 import { useAddEntry } from "@/hooks/useEntries";
 
 type FormData = {
-  date: string;
+  date: Date;
   value: number;
   notes: string;
 };
+
+const formatDate = (d: Date) => d.toISOString().split("T")[0];
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const tenYearsAgo = new Date();
+tenYearsAgo.setFullYear(today.getFullYear() - 10);
+tenYearsAgo.setHours(0, 0, 0, 0);
+const todayISO = formatDate(today);
+const tenYearsAgoISO = formatDate(tenYearsAgo);
+const transformToBackend = (data: FormData) => ({
+  ...data,
+  date: data.date.toISOString().split("T")[0],
+});
 
 export default function ProgressForm() {
   const {
@@ -17,59 +30,70 @@ export default function ProgressForm() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(progressSchema),
+    defaultValues: {
+      date: today,
+      value: 0,
+      notes: "",
+    },
   });
 
   const { mutate } = useAddEntry();
 
+  const dateValue = watch("date");
+
   const onSubmit = (data: FormData) => {
-    mutate(data, {
+    mutate(transformToBackend(data), {
       onSuccess: () => reset(),
     });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ marginBottom: "2rem" }}>
-      {/* Дата */}
-      <div>
-        <label>
-          Дата:
-          <input type="date" {...register("date")} />
-        </label>
-        {errors.date && <p style={{ color: "red" }}>{errors.date.message}</p>}
-      </div>
+    <div className="flex flex-col h-full justify-between">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-[120px_1fr] gap-y-4 gap-x-4"
+      >
+        <label className="text-label">Дата:</label>
+        <div className="flex flex-col">
+          <input
+            type="date"
+            className="input"
+            min={tenYearsAgoISO}
+            max={todayISO}
+            {...register("date", { valueAsDate: true })}
+            value={dateValue ? formatDate(dateValue) : ""}
+          />
+          {errors.date && <p className="error-text">{errors.date.message}</p>}
+        </div>
 
-      {/* Прогресс */}
-      <div>
-        <label>
-          Прогресс:
+        <label className="text-label">Прогресс:</label>
+        <div className="flex flex-col">
           <input
             type="number"
             placeholder="Введите прогресс"
+            className="input"
             {...register("value")}
           />
-        </label>
-        {errors.value && <p style={{ color: "red" }}>{errors.value.message}</p>}
-      </div>
+          {errors.value && <p className="error-text">{errors.value.message}</p>}
+        </div>
 
-      {/* Заметка */}
-      <div>
-        <label>
-          Заметка:
-          <textarea placeholder="Введите заметку" {...register("notes")} />
-        </label>
-        {errors.notes && <p style={{ color: "red" }}>{errors.notes.message}</p>}
-      </div>
+        <label className="text-label">Заметка:</label>
+        <div className="flex flex-col">
+          <textarea
+            placeholder="Введите заметку"
+            className="input"
+            {...register("notes")}
+          />
+          {errors.notes && <p className="error-text">{errors.notes.message}</p>}
+        </div>
 
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        type="submit"
-        disabled={isSubmitting}
-        style={{ marginTop: "1rem" }}
-      >
-        {isSubmitting ? "Сохраняем..." : "Добавить"}
-      </button>
-    </form>
+        <button className="btn-primary" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Сохраняем..." : "Добавить"}
+        </button>
+      </form>
+    </div>
   );
 }
