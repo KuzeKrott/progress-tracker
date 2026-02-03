@@ -1,18 +1,25 @@
 import * as yup from "yup";
 
 const today = new Date();
-today.setHours(0, 0, 0, 0);
 const tenYearsAgo = new Date();
 tenYearsAgo.setFullYear(today.getFullYear() - 10);
-tenYearsAgo.setHours(0, 0, 0, 0);
+const formatDate = (d: Date) => d.toISOString().split("T")[0];
+const todayStr = formatDate(today);
+const tenYearsAgoStr = formatDate(tenYearsAgo);
 
 export const progressSchema = yup.object({
   date: yup
-    .date()
+    .string()
     .typeError("Введите корректную дату")
     .required("Дата обязательна")
-    .min(tenYearsAgo, "Дата не может быть старше 10 лет")
-    .max(today, "Нельзя выбирать дату из будущего"),
+    .test(
+      "valid-range",
+      "Дата должна быть в диапазоне последних 10 лет и не в будущем",
+      (value) => {
+        if (!value) return false;
+        return value >= tenYearsAgoStr && value <= todayStr;
+      },
+    ),
   value: yup
     .number()
     .typeError("Введите число")

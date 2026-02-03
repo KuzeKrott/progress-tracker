@@ -6,23 +6,17 @@ import { progressSchema } from "@/schemas/progressSchema";
 import { useAddEntry } from "@/hooks/useEntries";
 
 type FormData = {
-  date: Date;
+  date: string;
   value: number;
   notes: string;
 };
 
-const formatDate = (d: Date) => d.toISOString().split("T")[0];
 const today = new Date();
-today.setHours(0, 0, 0, 0);
 const tenYearsAgo = new Date();
 tenYearsAgo.setFullYear(today.getFullYear() - 10);
-tenYearsAgo.setHours(0, 0, 0, 0);
-const todayISO = formatDate(today);
-const tenYearsAgoISO = formatDate(tenYearsAgo);
-const transformToBackend = (data: FormData) => ({
-  ...data,
-  date: data.date.toISOString().split("T")[0],
-});
+const formatDate = (d: Date) => d.toISOString().split("T")[0];
+const todayStr = formatDate(today);
+const tenYearsAgoStr = formatDate(tenYearsAgo);
 
 export default function ProgressForm() {
   const {
@@ -30,11 +24,10 @@ export default function ProgressForm() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-    watch,
   } = useForm<FormData>({
     resolver: yupResolver(progressSchema),
     defaultValues: {
-      date: today,
+      date: todayStr,
       value: 0,
       notes: "",
     },
@@ -42,10 +35,8 @@ export default function ProgressForm() {
 
   const { mutate } = useAddEntry();
 
-  const dateValue = watch("date");
-
   const onSubmit = (data: FormData) => {
-    mutate(transformToBackend(data), {
+    mutate(data, {
       onSuccess: () => reset(),
     });
   };
@@ -61,10 +52,10 @@ export default function ProgressForm() {
           <input
             type="date"
             className="input"
-            min={tenYearsAgoISO}
-            max={todayISO}
-            {...register("date", { valueAsDate: true })}
-            value={dateValue ? formatDate(dateValue) : ""}
+            min={tenYearsAgoStr}
+            max={todayStr}
+            {...register("date")}
+            value={todayStr}
           />
           {errors.date && <p className="error-text">{errors.date.message}</p>}
         </div>
