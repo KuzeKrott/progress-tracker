@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { progressSchema } from "@/schemas/progressSchema";
-import { useAddEntry } from "@/hooks/useEntries";
+import { useEntries, useAddEntry, DailyEntry } from "@/hooks/useEntries";
+import { useValidateDate } from "@/hooks/useValidateDate";
 
 type FormData = {
   date: string;
@@ -19,6 +21,11 @@ const todayStr = formatDate(today);
 const tenYearsAgoStr = formatDate(tenYearsAgo);
 
 export default function ProgressForm() {
+  const { data: entries = [] } = useEntries();
+  const { mutate } = useAddEntry();
+  const { validateDate } = useValidateDate();
+  const [dateError, setDateError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -33,10 +40,15 @@ export default function ProgressForm() {
     },
   });
 
-  const { mutate } = useAddEntry();
+  const onSubmit = (formData: FormData) => {
+    if (!validateDate(formData.date, entries)) {
+      setDateError("На эту дату уже есть запись");
+      return;
+    }
 
-  const onSubmit = (data: FormData) => {
-    mutate(data, {
+    setDateError(null); // очистка ошибки
+
+    mutate(formData, {
       onSuccess: () => reset(),
     });
   };
@@ -55,7 +67,7 @@ export default function ProgressForm() {
             min={tenYearsAgoStr}
             max={todayStr}
             {...register("date")}
-            value={todayStr}
+            defaultValue={todayStr}
           />
           {errors.date && <p className="error-text">{errors.date.message}</p>}
         </div>

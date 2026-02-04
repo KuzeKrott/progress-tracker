@@ -11,7 +11,7 @@
   /* Inputs */
   .input {
     @apply w-full border border-slate-300 rounded-md px-3 py-2 text-sm;
-    @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-600;
     @apply placeholder:text-slate-400;
   }
 
@@ -19,6 +19,9 @@
     @apply text-base text-slate-600 self-center;
   }
 
+  .text-primary {
+    @apply text-sky-800 font-bold font-sans mb-4 text-lg md:text-xl drop-shadow-md;
+  }
   .error-text {
     @apply text-red-500 text-sm mt-1;
   }
@@ -29,8 +32,16 @@
 
   /* Buttons */
   .btn-primary {
-    @apply bg-blue-500 text-white px-4 py-2 rounded-md;
-    @apply hover:bg-blue-600 transition;
+    @apply bg-blue-600 text-white px-4 py-2 rounded-md;
+    @apply hover:bg-blue-700 transition;
+  }
+
+  .span-btn-secondary {
+    @apply absolute top-12 left-1/2 -translate-x-1/2 mb-2 w-max bg-white/80 text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity;
+  }
+
+  .btn-secondary {
+    @apply p-2 rounded-full hover:bg-white/20 transition;
   }
 
   /* Cards */
