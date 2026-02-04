@@ -9,9 +9,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEntries } from "@/hooks/useEntries";
+import { useSortedEntries } from "@/hooks/useSortedEntries";
 
 export default function ProgressChart() {
   const { data = [], isLoading } = useEntries();
+  const sortedData = useSortedEntries(data, "asc");
 
   if (isLoading) return <p>Загрузка графика...</p>;
 
@@ -19,7 +21,7 @@ export default function ProgressChart() {
     <div className="flex flex-col h-full justify-between">
       <div className="flex-1 ">
         <ResponsiveContainer width="100%" height={500}>
-          <LineChart data={data}>
+          <LineChart data={sortedData}>
             <XAxis
               dataKey="date"
               tick={{ fontSize: 14 }}
@@ -36,7 +38,7 @@ export default function ProgressChart() {
               }}
               wrapperStyle={{ height: "auto", outline: "none" }}
             />
-            <Line type="monotone" dataKey="value" />
+            <Line type="monotone" stroke="#0369a1" dataKey="value" />
           </LineChart>
         </ResponsiveContainer>
       </div>
