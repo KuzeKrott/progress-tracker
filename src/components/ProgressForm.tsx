@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { progressSchema } from "@/schemas/progressSchema";
-import { useEntries, useAddEntry, DailyEntry } from "@/hooks/useEntries";
+import { useEntries, useAddEntry } from "@/hooks/useEntries";
 import { useValidateDate } from "@/hooks/useValidateDate";
 
 type FormData = {
@@ -14,6 +14,7 @@ type FormData = {
 };
 type ProgressFormProps = {
   onCancel?: () => void;
+  onSuccess?: () => void;
 };
 
 const today = new Date();
@@ -23,7 +24,10 @@ const formatDate = (d: Date) => d.toISOString().split("T")[0];
 const todayStr = formatDate(today);
 const tenYearsAgoStr = formatDate(tenYearsAgo);
 
-export default function ProgressForm({ onCancel }: ProgressFormProps) {
+export default function ProgressForm({
+  onCancel,
+  onSuccess,
+}: ProgressFormProps) {
   const { data: entries = [] } = useEntries();
   const { mutate } = useAddEntry();
   const { validateDate } = useValidateDate();
@@ -50,7 +54,10 @@ export default function ProgressForm({ onCancel }: ProgressFormProps) {
     }
     setDateError(null); // очистка ошибки
     mutate(formData, {
-      onSuccess: () => reset(),
+      onSuccess: () => {
+        reset();
+        onSuccess?.();
+      },
     });
   };
 
@@ -94,17 +101,12 @@ export default function ProgressForm({ onCancel }: ProgressFormProps) {
           {errors.notes && <p className="error-text">{errors.notes.message}</p>}
         </div>
 
-        <button className="btn-primary" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Сохраняем..." : "Добавить"}
-        </button>
-
-        <div className="col-span-2 flex justify-end gap-3 pt-4">
-          <button type="button" className="btn-secondary" onClick={onCancel}>
-            Отмена
-          </button>
-
+        <div className="col-span-2 flex justify-center gap-3 pt-4">
           <button className="btn-primary" type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Сохраняем..." : "Добавить"}
+          </button>
+          <button type="button" className="btn-secondary" onClick={onCancel}>
+            Отмена
           </button>
         </div>
       </form>

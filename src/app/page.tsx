@@ -40,7 +40,10 @@ export default function Home() {
 
       <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
         <h2 className="text-primary">Добавить запись</h2>
-        <ProgressForm onCancel={() => setIsFormOpen(false)} />
+        <ProgressForm
+          onCancel={() => setIsFormOpen(false)}
+          onSuccess={() => setIsFormOpen(false)}
+        />
       </Modal>
     </main>
   );
