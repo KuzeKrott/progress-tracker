@@ -2,13 +2,22 @@
 
 import { useEntries } from "@/hooks/useEntries";
 import { useSortedEntries, SortOrder } from "@/hooks/useSortedEntries";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+
+const ITEMS_PER_PAGE = 5;
 
 export default function EntriesList() {
   const { data = [], isLoading } = useEntries();
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const sortedEntries = useSortedEntries(data, sortOrder);
+  const totalPages = Math.ceil(sortedEntries.length / ITEMS_PER_PAGE);
+  const paginatedEntries = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return sortedEntries.slice(start, end);
+  }, [sortedEntries, currentPage]);
 
   if (isLoading) {
     return <p className="text-slate-500">Загрузка заметок...</p>;
@@ -29,11 +38,11 @@ export default function EntriesList() {
       </div>
 
       {/* СПИСОК */}
-      {sortedEntries.length === 0 ? (
+      {paginatedEntries.length === 0 ? (
         <p className="text-slate-500">Записей нет</p>
       ) : (
         <div className="space-y-3">
-          {sortedEntries.map((entry) => (
+          {paginatedEntries.map((entry) => (
             <div
               key={entry.date}
               className="border border-slate-200 rounded p-3"
@@ -48,6 +57,46 @@ export default function EntriesList() {
               )}
             </div>
           ))}
+        </div>
+      )}
+      {/* ПАГИНАЦИЯ */}
+      {totalPages > 1 && (
+        <div className="flex justify-center pt-4">
+          <div className="justify-center">
+            <button
+              className="h-8 w-8 p-2 text-sky-500"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              ←
+            </button>
+
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const page = i + 1;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`text-button justify-center pt-4 pb-4 p-1
+                  ${
+                    page === currentPage
+                      ? "bg-primary "
+                      : "bg-primary text-sky-500"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            <button
+              className={"h-8 w-8 p-2 text-sky-500"}
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              →
+            </button>
+          </div>
         </div>
       )}
     </div>

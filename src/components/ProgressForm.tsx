@@ -12,6 +12,9 @@ type FormData = {
   value: number;
   notes: string;
 };
+type ProgressFormProps = {
+  onCancel?: () => void;
+};
 
 const today = new Date();
 const tenYearsAgo = new Date();
@@ -20,7 +23,7 @@ const formatDate = (d: Date) => d.toISOString().split("T")[0];
 const todayStr = formatDate(today);
 const tenYearsAgoStr = formatDate(tenYearsAgo);
 
-export default function ProgressForm() {
+export default function ProgressForm({ onCancel }: ProgressFormProps) {
   const { data: entries = [] } = useEntries();
   const { mutate } = useAddEntry();
   const { validateDate } = useValidateDate();
@@ -45,9 +48,7 @@ export default function ProgressForm() {
       setDateError("На эту дату уже есть запись");
       return;
     }
-
     setDateError(null); // очистка ошибки
-
     mutate(formData, {
       onSuccess: () => reset(),
     });
@@ -96,6 +97,16 @@ export default function ProgressForm() {
         <button className="btn-primary" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Сохраняем..." : "Добавить"}
         </button>
+
+        <div className="col-span-2 flex justify-end gap-3 pt-4">
+          <button type="button" className="btn-secondary" onClick={onCancel}>
+            Отмена
+          </button>
+
+          <button className="btn-primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Сохраняем..." : "Добавить"}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -38,7 +38,7 @@ export default function ProgressChart() {
               }}
               wrapperStyle={{ height: "auto", outline: "none" }}
             />
-            <Line type="monotone" stroke="#0369a1" dataKey="value" />
+            <Line type="monotone" stroke="#0ea5e9" dataKey="value" />
           </LineChart>
         </ResponsiveContainer>
       </div>

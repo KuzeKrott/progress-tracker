@@ -3,7 +3,11 @@ import Image from "next/image";
 import { exportToExcel } from "@/utils/exportExcel";
 import { useEntries } from "@/hooks/useEntries";
 
-export default function Header() {
+type HeaderProps = {
+  onAddClick: () => void;
+};
+
+export default function Header({ onAddClick }: HeaderProps) {
   const { data = [] } = useEntries();
   return (
     <header className="absolute top-0 left-0 right-0 w-full z-20">
@@ -24,7 +28,7 @@ export default function Header() {
 
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <button className="btn-secondary">
+              <button className="btn-secondary" onClick={onAddClick}>
                 <Image
                   src="/plus-circle.svg"
                   alt="Add entry"

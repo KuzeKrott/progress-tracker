@@ -5,16 +5,18 @@ import ProgressChart from "@/components/ProgressChart";
 import EntriesList from "@/components/EntriesList";
 import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
+import Modal from "@/components/Modal";
+import { useState } from "react";
 
 export default function Home() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
   return (
     <main className="">
       {/* HERO */}
       <section className="relative h-[600px]">
-        {/* background image */}
         <div className="absolute inset-0 bg-[url('/img/ocean1.jpg')] bg-cover bg-center bg-fixed" />
         <div className="absolute inset-0 bg-black/10 backdrop-blur-sm" />
-        <Header />
+        <Header onAddClick={() => setIsFormOpen(true)} />
         <HeroText />
       </section>
 
@@ -28,10 +30,6 @@ export default function Home() {
             <h2 className="text-primary">График прогресса</h2>
             <ProgressChart />
           </div>
-
-          <div className="bg-white md:col-span-1 p-4 rounded shadow">
-            <ProgressForm />
-          </div>
         </div>
 
         <div className="bg-white p-6 rounded shadow">
@@ -39,6 +37,11 @@ export default function Home() {
           <EntriesList />
         </div>
       </div>
+
+      <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
+        <h2 className="text-primary">Добавить запись</h2>
+        <ProgressForm onCancel={() => setIsFormOpen(false)} />
+      </Modal>
     </main>
   );
 }
