@@ -39,3 +39,10 @@ export const addNote = async (note: Note) => {
   localStorage.setItem(NOTES_KEY, JSON.stringify(updated));
   return updated;
 };
+
+export const deleteNote = async (date: string) => {
+  const data = JSON.parse(localStorage.getItem(NOTES_KEY) || "[]");
+  const updated = data.filter((n: Note) => n.date !== date);
+  localStorage.setItem(NOTES_KEY, JSON.stringify(updated));
+  return updated;
+};

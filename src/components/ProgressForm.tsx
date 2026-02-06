@@ -74,10 +74,11 @@ export default function ProgressForm({
             className="input"
             min={tenYearsAgoStr}
             max={todayStr}
-            {...register("date")}
+            {...register("date", { onChange: () => setDateError(null) })}
             defaultValue={todayStr}
           />
           {errors.date && <p className="error-text">{errors.date.message}</p>}
+          {dateError && <p className="error-text">{dateError}</p>}
         </div>
 
         <label className="text-label">Прогресс:</label>

@@ -3,6 +3,7 @@
 import { useEntries } from "@/hooks/useEntries";
 import { useSortedEntries, SortOrder } from "@/hooks/useSortedEntries";
 import { useState, useMemo } from "react";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -45,11 +46,21 @@ export default function EntriesList() {
           {paginatedEntries.map((entry) => (
             <div
               key={entry.date}
-              className="border border-slate-200 rounded p-3"
+              className="border border-slate-200 rounded p-3 shadow-md"
             >
-              <div className="flex justify-between text-sm text-slate-500">
-                <span>{entry.date}</span>
-                <span>⭐{entry.value}</span>
+              <div className="flex text-sm text-slate-500">
+                <div className="flex items-center justify-between w-full">
+                  <span>{entry.date}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="flex items-center">{entry.value}</span>
+                    <Image
+                      src="/star1.svg"
+                      alt="stars"
+                      width={14}
+                      height={14}
+                    />
+                  </div>
+                </div>
               </div>
 
               {entry.notes && (
